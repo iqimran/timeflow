@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TimeFlow — Web</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo">⏱</div>
+        <div class="title">TimeFlow</div>
+      </div>
+      <nav>
+        <button class="nav-item" data-page="dashboard">Dashboard</button>
+        <button class="nav-item" data-page="tracker">Time Tracker</button>
+        <button class="nav-item" data-page="clients">Clients</button>
+        <button class="nav-item" data-page="projects">Projects</button>
+        <button class="nav-item" data-page="todos">To-dos</button>
+        <button class="nav-item" data-page="invoices">Invoices</button>
+        <button class="nav-item" data-page="reports">Reports</button>
+      </nav>
+      <div class="footer-note">Web • PHP + MySQL</div>
+    </aside>
+    <main id="page"></main>
+  </div>
+
+  <!-- Templates -->
+  <template id="tpl-dashboard">
+    <section class="panel">
+      <h2>Dashboard</h2>
+      <div class="cards3">
+        <div class="card stat"><div class="stat-title">Today</div><div class="stat-value" id="dashToday">0h 0m</div><div class="stat-sub">Total hours logged</div></div>
+        <div class="card stat"><div class="stat-title">This week</div><div class="stat-value" id="dashWeek">0h 0m</div><div class="stat-sub">Total hours logged</div></div>
+        <div class="card stat"><div class="stat-title">Uninvoiced Amount</div><div class="stat-value" id="dashUninv">$0.00</div><div class="stat-sub">Billable, not invoiced</div></div>
+      </div>
+      <div class="cards2" style="margin-top:12px">
+        <div class="card"><div class="stat-title">Total hours by client (this week)</div><div id="dashClientTable"></div></div>
+        <div class="card"><div class="stat-title">Billable hours (this week)</div><div class="stat-value" id="dashBillableWeek">0h 0m</div><div class="stat-sub">Sum of billable time</div></div>
+      </div>
+    </section>
+  </template>
+
+  <template id="tpl-tracker">
+    <section class="card">
+      <h2>Time Tracker</h2>
+      <div class="panel">
+        <div id="trkDisplay" class="timer">00:00</div>
+        <div class="form-row"><label>Client</label><select id="trkClient"></select></div>
+        <div class="form-row"><label>Project</label><select id="trkProject"></select></div>
+        <div class="form-row"><label>To-do</label><select id="trkTodo"></select></div>
+        <input id="trkNote" placeholder="What are you working on?"/>
+        <div class="btn-row">
+          <button id="trkStart" class="btn primary">Start Timer</button>
+          <button id="trkStop" class="btn">Stop</button>
+        </div>
+      </div>
+    </section>
+    <section class="card">
+      <h3>Recent Time Entries</h3>
+      <div id="entriesTable"></div>
+      <button id="exportCsv" class="btn">Export CSV</button>
+    </section>
+  </template>
+
+  <template id="tpl-clients">
+    <section class="panel">
+      <div class="toolbar">
+        <h2>Clients</h2>
+        <button id="addClient" class="btn primary">Add Client</button>
+      </div>
+      <div id="clientsTable" class="table"></div>
+    </section>
+  </template>
+
+  <template id="tpl-projects">
+    <section class="panel">
+      <div class="toolbar">
+        <h2>Projects</h2>
+        <button id="addProject" class="btn primary">Add Project</button>
+      </div>
+      <div id="projectsTable" class="table"></div>
+    </section>
+  </template>
+
+  <template id="tpl-todos">
+    <section class="panel">
+      <div class="toolbar">
+        <h2>To-dos</h2>
+        <button id="addTodo" class="btn primary">Add To-do</button>
+      </div>
+      <div id="todosTable" class="table"></div>
+    </section>
+  </template>
+
+  <template id="tpl-invoices">
+    <section class="panel">
+      <div class="toolbar">
+        <h2>Invoices</h2>
+        <button id="btnNewInvoice" class="btn primary">Create Invoice</button>
+      </div>
+      <div id="invoicesTable" class="table"></div>
+    </section>
+  </template>
+
+  <template id="tpl-reports">
+    <section class="panel">
+      <h2>Reports</h2>
+      <div id="reportContent" class="table"></div>
+    </section>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>

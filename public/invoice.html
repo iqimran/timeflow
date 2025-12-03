@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Invoice</title>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    body{background:#fff;}
+    .invoice{max-width:900px;margin:20px auto;background:#fff;padding:40px;border:1px solid #e5e7eb;}
+    .invoice h1{font-size:28px;margin:0}
+    .row{display:flex;justify-content:space-between;gap:20px}
+    table{width:100%;border-collapse:collapse;margin-top:20px}
+    th,td{border:1px solid #e5e7eb;padding:8px;text-align:left;font-size:14px}
+    .right{text-align:right}
+    .muted{color:#6b7280}
+    .payblock{border:1px dashed #d1d5db;padding:10px;margin-top:10px}
+    @media print {.no-print{display:none} body{background:#fff}}
+  </style>
+</head>
+<body>
+  <div class="invoice">
+    <div class="row">
+      <div>
+        <h1>INVOICE</h1>
+        <div id="invNumber" class="muted"></div>
+      </div>
+      <div style="text-align:right">
+        <strong id="bizName">Your Name / Logo</strong><br/>
+        <span id="bizEmail" class="muted"></span>
+      </div>
+    </div>
+
+    <div class="row" style="margin-top:20px">
+      <div>
+        <h3>Bill To</h3>
+        <div id="billTo"></div>
+      </div>
+      <div>
+        <div>Issue Date: <span id="issueDate"></span></div>
+        <div>Due Date: <span id="dueDate"></span></div>
+        <div>Currency: <span id="currency"></span></div>
+      </div>
+    </div>
+
+    <table id="lines">
+      <thead>
+        <tr>
+          <th>Date</th><th>Start</th><th>End</th><th>Duration</th><th>To-do / Notes</th><th>Project</th><th class="right">Rate</th><th class="right">Amount</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <div class="row" style="margin-top:10px">
+      <div></div>
+      <table style="width:300px">
+        <tr><td>Hours</td><td class="right" id="sumHours">0:00:00</td></tr>
+        <tr><td>Subtotal</td><td class="right" id="sumSubtotal">0</td></tr>
+        <tr><td>Discount</td><td class="right" id="sumDiscount">0</td></tr>
+        <tr><td>Tax</td><td class="right" id="sumTax">0</td></tr>
+        <tr><th>Grand Total</th><th class="right" id="sumGrand">0</th></tr>
+      </table>
+    </div>
+
+    <h3>Payment Details</h3>
+    <div class="row">
+      <div class="payblock">
+        <strong>Payoneer</strong>
+        <div id="payoneerBlock" class="muted"></div>
+      </div>
+      <div class="payblock">
+        <strong>Bank</strong>
+        <div id="bankBlock" class="muted"></div>
+      </div>
+    </div>
+
+    <p class="muted" style="margin-top:20px">Notes: Thank you for your business.</p>
+    <button class="btn primary no-print" onclick="window.print()">Print / Save as PDF</button>
+  </div>
+
+  <script>
+    const data = JSON.parse(decodeURIComponent(location.hash.slice(1) || "{}"));
+    const set = (id, v) => document.getElementById(id).textContent = v || "";
+    set("invNumber", "Invoice # " + (data.number||""));
+    set("issueDate", data.issueDate||"");
+    set("dueDate", data.dueDate||"");
+    set("currency", data.currency||"");
+    set("bizName", data.bizName||"");
+    set("bizEmail", data.bizEmail||"");
+
+    const bill = data.client||{};
+    document.getElementById("billTo").innerHTML =
+      (bill.name||"") + "<br/>" + (bill.address||"") + "<br/>" + (bill.email||"");
+
+    const tbody = document.querySelector("#lines tbody");
+    (data.lines||[]).forEach(l => {
+      const tr = document.createElement("tr");
+      const td = (x, cls="") => { const el=document.createElement("td"); el.textContent=x||""; if(cls) el.className=cls; tr.appendChild(el); };
+      td(l.date); td(l.start); td(l.end); td(l.duration);
+      td(l.description); td(l.project);
+      td(l.rate?.toFixed ? l.rate.toFixed(2) : (l.rate||""), "right");
+      td(l.amount?.toFixed ? l.amount.toFixed(2) : (l.amount||""), "right");
+      tbody.appendChild(tr);
+    });
+
+    set("sumHours", data.totals?.hoursText||"");
+    set("sumSubtotal", (data.totals?.subtotal||0).toFixed(2));
+    set("sumDiscount", (data.totals?.discount||0).toFixed(2));
+    set("sumTax", (data.totals?.tax||0).toFixed(2));
+    set("sumGrand", (data.totals?.grandTotal||0).toFixed(2));
+    document.getElementById("payoneerBlock").textContent = data.payoneer || "";
+    document.getElementById("bankBlock").textContent = data.bank || "";
+  </script>
+</body>
+</html>
